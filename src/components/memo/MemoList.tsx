@@ -3,7 +3,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"; // 引入shadcn的Scro
 
 export default function MemoList() {
   return (
-    <ScrollArea className="flex-grow scrollbar-hide">
+    <ScrollArea className="flex-grow">
       <div className="flex flex-col gap-2">
         <MemoItem />
         <MemoItem />
