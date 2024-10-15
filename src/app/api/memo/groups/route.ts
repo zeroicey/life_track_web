@@ -10,12 +10,13 @@ export async function GET() {
 
 // POST /api/memo/groups
 export async function POST(req: Request) {
-  const { name } = await req.json();
+  const { name, description } = await req.json();
+  console.log(name, description);
 
   const response = await fetch("http://localhost:3000/api/memo/groups", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ name, description }),
   });
 
   const data = await response.json();

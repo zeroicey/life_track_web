@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IoIosMore } from "react-icons/io";
+import { IoIosMore, IoMdAdd } from "react-icons/io";
 import {
   Table,
   TableBody,
@@ -153,7 +153,9 @@ export default function TableDemo() {
         isVisible={isNewInputVisible}
         onClose={() => setNewInputVisible(false)}
       />
-      <button onClick={() => setNewInputVisible(true)}>aaa</button>
+      <button onClick={() => setNewInputVisible(true)}>
+        <IoMdAdd onClick={() => {}} />
+      </button>
       <Table>
         <TableCaption>A list of your all groups.</TableCaption>
         <TableHeader>
