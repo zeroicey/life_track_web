@@ -1,3 +1,4 @@
+"use client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
+import { useState } from "react";
+import GroupNewInput from "@/components/memo/group-new-input";
 
 const groups = [
   {
@@ -143,8 +146,14 @@ const groups = [
 ];
 
 export default function TableDemo() {
+  const [isNewInputVisible, setNewInputVisible] = useState(false);
   return (
     <div className="border-2 rounded p-2 border-red-700">
+      <GroupNewInput
+        isVisible={isNewInputVisible}
+        onClose={() => setNewInputVisible(false)}
+      />
+      <button onClick={() => setNewInputVisible(true)}>aaa</button>
       <Table>
         <TableCaption>A list of your all groups.</TableCaption>
         <TableHeader>
