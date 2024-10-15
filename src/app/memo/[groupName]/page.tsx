@@ -1,6 +1,6 @@
 "use client";
 
-import MemoList from "@/components/memo/MemoList";
+import MemoList from "@/components/memo/memo-list";
 import { useRouter } from "next/navigation";
 import { IoMdArrowRoundBack, IoMdAdd } from "react-icons/io";
 import { Button } from "@/components/ui/button";

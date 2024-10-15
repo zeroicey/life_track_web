@@ -1,4 +1,4 @@
-import MemoItem from "./MemoItem";
+import MemoItem from "./memo-item";
 import { ScrollArea } from "@/components/ui/scroll-area"; // 引入shadcn的ScrollArea组件
 
 export default function MemoList() {
