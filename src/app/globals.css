@@ -9,6 +9,7 @@ body {
 html,
 body,
 :root {
+  padding: 5px;
   height: 100%;
 }
 
