@@ -20,7 +20,8 @@ export async function POST(req: Request) {
   });
 
   const data = await response.json();
-  return NextResponse.json(data, { status: response.ok ? 200 : 400 });
+  console.log(data);
+  return NextResponse.json(data, { status: response.status ? 200 : 400 });
 }
 
 // PATCH /api/memo/groups/:id
