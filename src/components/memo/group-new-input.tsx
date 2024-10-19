@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,22 +8,32 @@ import {
 } from "../ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
+import { Group } from "@/app/memo/page";
+
 interface Props {
   isVisible: boolean;
   onClose: () => void;
+  onGroupCreated: (newGroup: Group) => void; // 新增的回调
 }
 
-const GroupNewInput: React.FC<Props> = ({ isVisible, onClose }) => {
+const GroupNewInput: React.FC<Props> = ({
+  isVisible,
+  onClose,
+  onGroupCreated,
+}) => {
   const handleOutsideClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if ((event.target as HTMLDivElement).id === "input-background") {
       onClose();
     }
   };
+
   if (!isVisible) return null;
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+
   const handleSubmit = async () => {
-    await fetch("/api/memo/groups", {
+    const response = await fetch("/api/memo/groups", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -31,9 +41,25 @@ const GroupNewInput: React.FC<Props> = ({ isVisible, onClose }) => {
       body: JSON.stringify({
         name,
         description,
-      }), // 将数据转换为JSON格式
+      }),
     });
+    const resp = await response.json();
+
+    if (resp.status) {
+      // 如果请求成功，关闭浮窗
+      onClose();
+      // TODO: Type!!!!
+      console.log(resp.data);
+      onGroupCreated({
+        memo_number: 0,
+        ...resp.data,
+      });
+    } else {
+      // 处理错误，例如显示错误消息
+      console.error("Failed to create group");
+    }
   };
+
   return (
     <div
       id="input-background"
@@ -67,7 +93,7 @@ const GroupNewInput: React.FC<Props> = ({ isVisible, onClose }) => {
               className="w-full"
               size="lg"
               disabled={false}
-              onClick={() => handleSubmit()}
+              onClick={handleSubmit}
             >
               Submit
             </Button>
