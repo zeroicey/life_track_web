@@ -66,7 +66,7 @@ export default function TableDemo() {
         // TODO: WDF It is ? How to do it?
         onGroupCreated={handleGroupCreated}
       />
-      <button onClick={() => setNewInputVisible(true)}>
+      <button className="pl-1" onClick={() => setNewInputVisible(true)}>
         <IoMdAdd />
       </button>
       <Table>
@@ -85,7 +85,9 @@ export default function TableDemo() {
           {groups.map((group) => (
             <TableRow key={group.id}>
               <TableCell>
-                <Link href={`/memo/${group.name}`}>{group.name}</Link>
+                <Link href={`/memo/${encodeURIComponent(group.name)}`}>
+                  {group.name}
+                </Link>
               </TableCell>
               <TableCell className="hidden md:table-cell">
                 {group.created_at}

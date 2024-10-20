@@ -13,9 +13,12 @@ import {
 export default function MemoGroup({
   params,
 }: {
-  params: { groupName: String };
+  params: { groupName: string };
 }) {
   const router = useRouter();
+  const group_name = params.groupName
+    ? decodeURIComponent(params.groupName as string)
+    : "";
   return (
     <div className="flex flex-col w-full h-full gap-2">
       <div className="border-2 rounded-lg border-cyan-400 w-full flex flex-row justify-between items-center px-2 py-1">
@@ -25,7 +28,7 @@ export default function MemoGroup({
         <HoverCard>
           <HoverCardTrigger>
             <Button variant="link" className="text-lg">
-              {params.groupName}
+              {group_name}
             </Button>
           </HoverCardTrigger>
           <HoverCardContent>
