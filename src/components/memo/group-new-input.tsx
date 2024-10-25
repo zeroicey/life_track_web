@@ -43,16 +43,15 @@ const GroupNewInput: React.FC<Props> = ({
         description,
       }),
     });
-    const resp = await response.json();
+    const { status, data } = await response.json();
 
-    if (resp.status) {
+    if (status) {
       // 如果请求成功，关闭浮窗
       onClose();
-      // TODO: Type!!!!
-      console.log(resp.data);
+      console.log(data);
       onGroupCreated({
         memo_number: 0,
-        ...resp.data,
+        ...data,
       });
     } else {
       // 处理错误，例如显示错误消息

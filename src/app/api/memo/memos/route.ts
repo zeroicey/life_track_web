@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { Responder } from "@/app/api/response";
 
 // GET /api/memo/memos/:id
 export async function GET(
@@ -62,10 +63,7 @@ export async function PATCH(
 }
 
 // DELETE /api/memo/memos/:id
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE({ params }: { params: { id: string } }) {
   const id = Number(params.id);
 
   if (isNaN(id)) {
@@ -75,7 +73,7 @@ export async function DELETE(
   const response = await fetch(`http://localhost:3000/api/memo/memos/${id}`, {
     method: "DELETE",
   });
-  const data = await response.json();
+  const resp: Responder = await response.json();
 
-  return NextResponse.json(data, { status: response.ok ? 200 : 404 });
+  return NextResponse.json({ status: resp.status });
 }

@@ -58,12 +58,34 @@ export default function TableDemo() {
   const handleGroupCreated = (newGroup: Group) => {
     setGroups((prevGroups) => [newGroup, ...prevGroups]); // 添加新组到现有组列表
   };
+
+  const handleDeleteGroup = async (groupId: number) => {
+    const confirmed = confirm("Are you sure you want to delete this group?");
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`/api/memo/groups/${groupId}`, {
+        method: "DELETE",
+      });
+      const resp = await response.json();
+      if (resp.status) {
+        // 删除成功，更新组列表
+        setGroups((prevGroups) =>
+          prevGroups.filter((group) => group.id !== groupId)
+        );
+      } else {
+        console.error(resp.message);
+      }
+    } catch (error) {
+      console.error("Failed to delete group:", error);
+    }
+  };
+
   return (
     <div className="border-2 rounded p-2 border-red-700">
       <GroupNewInput
         isVisible={isNewInputVisible}
         onClose={() => setNewInputVisible(false)}
-        // TODO: WDF It is ? How to do it?
         onGroupCreated={handleGroupCreated}
       />
       <button className="pl-1" onClick={() => setNewInputVisible(true)}>
@@ -107,7 +129,11 @@ export default function TableDemo() {
                   <DropdownMenuContent>
                     <DropdownMenuLabel>{group.name}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleDeleteGroup(group.id)}
+                    >
+                      Delete
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Empty</DropdownMenuItem>
                     <DropdownMenuItem>Edit</DropdownMenuItem>
                   </DropdownMenuContent>
