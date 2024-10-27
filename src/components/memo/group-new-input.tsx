@@ -1,106 +1,39 @@
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "../ui/button";
-import { Group } from "@/app/memo/page";
+import { useRef, forwardRef, useImperativeHandle } from "react";
 
-interface Props {
-  isVisible: boolean;
-  onClose: () => void;
-  onGroupCreated: (newGroup: Group) => void; // 新增的回调
+export interface GroupNewInputRef {
+  openModal: () => void;
 }
 
-const GroupNewInput: React.FC<Props> = ({
-  isVisible,
-  onClose,
-  onGroupCreated,
-}) => {
-  const handleOutsideClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLDivElement).id === "input-background") {
-      onClose();
+const GroupNewInput = forwardRef<GroupNewInputRef>((_, ref) => {
+  const modalRef = useRef<HTMLDialogElement>(null);
+
+  // 打开模态框的函数
+  const openModal = () => {
+    if (modalRef.current) {
+      modalRef.current.showModal();
     }
   };
 
-  if (!isVisible) return null;
-
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-
-  const handleSubmit = async () => {
-    const response = await fetch("/api/memo/groups", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        description,
-      }),
-    });
-    const { status, data } = await response.json();
-
-    if (status) {
-      // 如果请求成功，关闭浮窗
-      onClose();
-      console.log(data);
-      onGroupCreated({
-        memo_number: 0,
-        ...data,
-      });
-    } else {
-      // 处理错误，例如显示错误消息
-      console.error("Failed to create group");
-    }
-  };
+  // 暴露 openModal 方法给父组件
+  useImperativeHandle(ref, () => ({
+    openModal,
+  }));
 
   return (
-    <div
-      id="input-background"
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-      onClick={handleOutsideClick}
-    >
-      <div className="rounded-md z-50 relative">
-        <Card className="w-full h-full p-8">
-          <CardHeader className="px-0 pt-0">
-            <CardTitle>Create New Group</CardTitle>
-            <CardDescription>A new group to record your memo</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-5 px-0 pb-0">
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={false}
-              placeholder="Name"
-              type="text"
-              required
-            />
-            <Input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              disabled={false}
-              placeholder="Description"
-              type="text"
-              required
-            />
-            <Button
-              className="w-full"
-              size="lg"
-              disabled={false}
-              onClick={handleSubmit}
-            >
-              Submit
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <>
+      <dialog ref={modalRef} id="group-new-input" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">Hello!</h3>
+          <p className="py-4">Press ESC key or click on ✕ button to close</p>
+        </div>
+      </dialog>
+    </>
   );
-};
+});
 
 export default GroupNewInput;

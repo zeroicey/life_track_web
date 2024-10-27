@@ -1,148 +1,103 @@
 "use client";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { IoIosMore, IoMdAdd } from "react-icons/io";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { get_all_groups, Group } from "@/api/memo/group";
+import { ApiResponse } from "@/api/response";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import GroupNewInput from "@/components/memo/group-new-input";
+import { IoIosMore, IoMdAdd } from "react-icons/io";
+import { useEffect, useRef, useState } from "react";
+import GroupNewInput, {
+  GroupNewInputRef,
+} from "@/components/memo/group-new-input";
 
-export interface Group {
-  id: number;
-  name: string;
-  created_at: string;
-  updated_at: string;
-  description: string;
-  memo_number: number;
-}
+export default function MemoGroups() {
+  const groupNewInputRef = useRef<GroupNewInputRef>(null);
 
-export default function TableDemo() {
-  const [isNewInputVisible, setNewInputVisible] = useState(false);
+  // 调用子组件的 openModal 方法
+  const handleOpenModal = () => {
+    if (groupNewInputRef.current) {
+      groupNewInputRef.current.openModal();
+    }
+  };
   const [groups, setGroups] = useState<Group[]>([]);
 
   useEffect(() => {
-    // 获取所有 MemoGroups
-    const fetchGroups = async () => {
-      try {
-        const response = await fetch("/api/memo/groups", {
-          method: "GET",
-        });
-        const data = await response.json();
-        if (data.status) {
-          setGroups(data.data);
-        } else {
-          console.error(data.message);
-        }
-      } catch (error) {
-        console.error("Failed to fetch groups:", error);
+    (async () => {
+      const response: ApiResponse<Group[]> = await get_all_groups();
+      if (!response.status || !response.data) {
+        return;
       }
-    };
-
-    fetchGroups();
+      setGroups(response.data);
+    })();
   }, []);
-  const handleGroupCreated = (newGroup: Group) => {
-    setGroups((prevGroups) => [newGroup, ...prevGroups]); // 添加新组到现有组列表
-  };
-
-  const handleDeleteGroup = async (groupId: number) => {
-    const confirmed = confirm("Are you sure you want to delete this group?");
-    if (!confirmed) return;
-
-    try {
-      const response = await fetch(`/api/memo/groups/${groupId}`, {
-        method: "DELETE",
-      });
-      const resp = await response.json();
-      if (resp.status) {
-        // 删除成功，更新组列表
-        setGroups((prevGroups) =>
-          prevGroups.filter((group) => group.id !== groupId)
-        );
-      } else {
-        console.error(resp.message);
-      }
-    } catch (error) {
-      console.error("Failed to delete group:", error);
-    }
-  };
 
   return (
-    <div className="border-2 rounded p-2 border-red-700">
-      <GroupNewInput
-        isVisible={isNewInputVisible}
-        onClose={() => setNewInputVisible(false)}
-        onGroupCreated={handleGroupCreated}
-      />
-      <button className="pl-1" onClick={() => setNewInputVisible(true)}>
-        <IoMdAdd />
-      </button>
-      <Table>
-        <TableCaption>A list of your all groups.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead className="hidden md:table-cell">Create At</TableHead>
-            <TableHead>Update At</TableHead>
-            <TableHead className="hidden md:table-cell">Description</TableHead>
-            <TableHead className="hidden md:table-cell">Memo Number</TableHead>
-            <TableHead>Handle</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {groups.map((group) => (
-            <TableRow key={group.id}>
-              <TableCell>
-                <Link href={`/memo/${encodeURIComponent(group.name)}`}>
-                  {group.name}
-                </Link>
-              </TableCell>
-              <TableCell className="hidden md:table-cell">
-                {group.created_at}
-              </TableCell>
-              <TableCell>{group.updated_at}</TableCell>
-              <TableCell className="hidden md:table-cell">
-                {group.description}
-              </TableCell>
-              <TableCell className="hidden md:table-cell">
-                {group.memo_number}
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger>
-                    <IoIosMore />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>{group.name}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => handleDeleteGroup(group.id)}
-                    >
-                      Delete
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>Empty</DropdownMenuItem>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div className="flex flex-col p-5 gap-3 h-screen">
+      {/* 高度设为屏幕高度 */}
+      <GroupNewInput ref={groupNewInputRef} />
+      <div className="flex flex-row items-center w-full border rounded-lg py-2 px-6">
+        <div className="breadcrumbs text-sm flex-grow">
+          <ul>
+            <li>
+              <a>Home</a>
+            </li>
+            <li>
+              <a>Memo</a>
+            </li>
+          </ul>
+        </div>
+        <button onClick={handleOpenModal}>
+          <IoMdAdd />
+        </button>
+      </div>
+      {/* 占用剩余空间并设置滚动 */}
+      <div className="flex flex-grow border w-full rounded-lg overflow-y-auto p-2">
+        <table className="table min-w-full">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th className="hidden md:table-cell">Created At</th>
+              <th>Updated At</th>
+              <th className="hidden md:table-cell">Description</th>
+              <th className="hidden md:table-cell">Memo Number</th>
+              <th>Handle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {groups.map((group: Group) => (
+              <tr key={group.id}>
+                <td>
+                  <Link className="link link-accent" href={`/memo/${group.id}`}>
+                    {group.name}
+                  </Link>
+                </td>
+                <td className="hidden md:table-cell">{group.created_at}</td>
+                <td>{group.updated_at}</td>
+                <td className="hidden md:table-cell">{group.description}</td>
+                <td className="hidden md:table-cell">
+                  <div className="badge badge-accent">{group.memo_number}</div>
+                </td>
+                <td>
+                  <details className="dropdown dropdown-end">
+                    <summary className="btn m-1">
+                      <IoIosMore />
+                    </summary>
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                      <li>
+                        <a>Delete</a>
+                      </li>
+                      <li>
+                        <a>Edit</a>
+                      </li>
+                      <li>
+                        <a>Empty</a>
+                      </li>
+                    </ul>
+                  </details>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

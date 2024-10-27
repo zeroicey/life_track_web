@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,10 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "Life Track",
-    template: "%s | Life Track",
-  },
+  title: "Life Track",
   description: "Tracked your life by this system",
 };
 

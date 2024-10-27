@@ -1,4 +1,3 @@
-import { Separator } from "@/components/ui/separator";
 import { IoIosMore } from "react-icons/io";
 
 export default function MemoItem() {
@@ -10,7 +9,6 @@ export default function MemoItem() {
           <IoIosMore />
         </button>
       </div>
-      <Separator />
       <div className="">Text</div>
       <div className="grid grid-cols-3 md:flex md:flex-wrap justify-around gap-2">
         <div className="aspect-square bg-gray-300">Attach 1</div>
