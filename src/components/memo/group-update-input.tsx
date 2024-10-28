@@ -1,24 +1,38 @@
 "use client";
-import { create_group } from "@/api/memo/group";
+import { Group, update_group } from "@/api/memo/group";
 import { ApiResponse } from "@/api/response";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
-interface GroupNewInputProps {
+interface GroupUpdateInputProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  group: Group | null;
 }
 
-export default function GroupNewInput({ isOpen, onClose, onSuccess }: GroupNewInputProps) {
+export default function GroupUpdateInput({
+  isOpen,
+  onClose,
+  onSuccess,
+  group,
+}: GroupUpdateInputProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
+  // 当 group 变化时更新输入框的值
+  useEffect(() => {
+    if (group && isOpen) {
+      if (nameRef.current) nameRef.current.value = group.name;
+      if (descriptionRef.current) descriptionRef.current.value = group.description;
+    }
+  }, [group, isOpen]);
+
   const handleSubmit = async () => {
-    if (!nameRef.current?.value) {
+    if (!nameRef.current?.value || !group) {
       return;
     }
 
-    const response = await create_group({
+    const response = await update_group(group.id, {
       name: nameRef.current.value,
       description: descriptionRef.current?.value || "",
     });
@@ -27,15 +41,10 @@ export default function GroupNewInput({ isOpen, onClose, onSuccess }: GroupNewIn
       return;
     }
 
-    // 清空输入框
-    if (nameRef.current) nameRef.current.value = '';
-    if (descriptionRef.current) descriptionRef.current.value = '';
-
     onSuccess();
     onClose();
   };
 
-  // 添加关闭时清空输入框的处理
   const handleClose = () => {
     if (nameRef.current) nameRef.current.value = '';
     if (descriptionRef.current) descriptionRef.current.value = '';
@@ -45,7 +54,7 @@ export default function GroupNewInput({ isOpen, onClose, onSuccess }: GroupNewIn
   return (
     <dialog className={`modal ${isOpen ? "modal-open" : ""}`}>
       <div className="modal-box">
-        <h3 className="font-bold text-lg">Create New Group</h3>
+        <h3 className="font-bold text-lg">Update Group</h3>
         <div className="py-4 flex flex-col gap-3">
           <div className="form-control w-full">
             <label className="label">
@@ -74,7 +83,7 @@ export default function GroupNewInput({ isOpen, onClose, onSuccess }: GroupNewIn
             Cancel
           </button>
           <button className="btn btn-primary" onClick={handleSubmit}>
-            Create
+            Update
           </button>
         </div>
       </div>

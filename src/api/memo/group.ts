@@ -9,6 +9,11 @@ export interface Group {
   memo_number: number;
 }
 
+export interface CreateGroupRequest {
+  name: string;
+  description: string;
+}
+
 export async function get_all_groups(): Promise<ApiResponse<Group[]>> {
   try {
     const response = await fetch("http://localhost:3000/api/memo/groups");
@@ -22,6 +27,92 @@ export async function get_all_groups(): Promise<ApiResponse<Group[]>> {
     return {
       status: false,
       message: "Failed to fetch groups",
+    };
+  }
+}
+
+export async function create_group(
+  request: CreateGroupRequest
+): Promise<ApiResponse<null>> {
+  try {
+    const response = await fetch("http://localhost:3000/api/memo/groups", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    const data = await response.json();
+    return {
+      status: response.ok,
+      message: data.message || "Success",
+      data: data.data, // 返回创建的 group 数据
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error instanceof Error ? error.message : "Unknown error",
+      data: null,
+    };
+  }
+}
+
+// 添加 delete_group 函数
+export async function delete_group(id: number): Promise<ApiResponse<null>> {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/memo/groups/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const data = await response.json();
+    return {
+      status: response.ok,
+      message: data.message || "Successfully deleted",
+      data: null,
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message:
+        error instanceof Error ? error.message : "Failed to delete group",
+      data: null,
+    };
+  }
+}
+
+export interface UpdateGroupRequest {
+  name: string;
+  description: string;
+}
+
+export async function update_group(
+  id: number,
+  request: UpdateGroupRequest
+): Promise<ApiResponse<null>> {
+  try {
+    const response = await fetch(`http://localhost:3000/api/memo/groups/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    const data = await response.json();
+    return {
+      status: response.ok,
+      message: data.message || "Successfully updated",
+      data: null,
+    };
+  } catch (error) {
+    return {
+      status: false,
+      message: error instanceof Error ? error.message : "Failed to update group",
+      data: null,
     };
   }
 }

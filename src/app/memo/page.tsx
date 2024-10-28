@@ -1,38 +1,56 @@
 "use client";
-import { get_all_groups, Group } from "@/api/memo/group";
+import { delete_group, get_all_groups, Group } from "@/api/memo/group";
 import { ApiResponse } from "@/api/response";
 import Link from "next/link";
 import { IoIosMore, IoMdAdd } from "react-icons/io";
 import { useEffect, useRef, useState } from "react";
-import GroupNewInput, {
-  GroupNewInputRef,
-} from "@/components/memo/group-new-input";
+import GroupNewInput from "@/components/memo/group-new-input";
+import GroupUpdateInput from "@/components/memo/group-update-input";
 
 export default function MemoGroups() {
-  const groupNewInputRef = useRef<GroupNewInputRef>(null);
-
-  // 调用子组件的 openModal 方法
-  const handleOpenModal = () => {
-    if (groupNewInputRef.current) {
-      groupNewInputRef.current.openModal();
-    }
-  };
   const [groups, setGroups] = useState<Group[]>([]);
+  // 改名为更具体的名称
+  const [isNewGroupModalOpen, setIsNewGroupModalOpen] = useState(false);
+  const [isUpdateGroupModalOpen, setIsUpdateGroupModalOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+
+  const fetchGroups = async () => {
+    const response: ApiResponse<Group[]> = await get_all_groups();
+    if (!response.status || !response.data) {
+      return;
+    }
+    setGroups(response.data);
+  };
 
   useEffect(() => {
-    (async () => {
-      const response: ApiResponse<Group[]> = await get_all_groups();
-      if (!response.status || !response.data) {
-        return;
-      }
-      setGroups(response.data);
-    })();
+    fetchGroups();
   }, []);
+
+  // 添加删除处理函数
+  const handleDelete = async (id: number) => {
+    // 使用 confirm 询问用户
+    if (!window.confirm("Are you sure you want to delete this group?")) {
+      return;
+    }
+
+    const response = await delete_group(id);
+    if (!response.status) {
+      alert(response.message);
+      return;
+    }
+
+    // 删除成功后刷新列表
+    fetchGroups();
+  };
+
+  // 添加更新处理函数
+  const handleUpdate = (group: Group) => {
+    setSelectedGroup(group);
+    setIsUpdateGroupModalOpen(true);
+  };
 
   return (
     <div className="flex flex-col p-5 gap-3 h-screen">
-      {/* 高度设为屏幕高度 */}
-      <GroupNewInput ref={groupNewInputRef} />
       <div className="flex flex-row items-center w-full border rounded-lg py-2 px-6">
         <div className="breadcrumbs text-sm flex-grow">
           <ul>
@@ -44,11 +62,10 @@ export default function MemoGroups() {
             </li>
           </ul>
         </div>
-        <button onClick={handleOpenModal}>
+        <button onClick={() => setIsNewGroupModalOpen(true)}>
           <IoMdAdd />
         </button>
       </div>
-      {/* 占用剩余空间并设置滚动 */}
       <div className="flex flex-grow border w-full rounded-lg overflow-y-auto p-2">
         <table className="table min-w-full">
           <thead>
@@ -82,10 +99,10 @@ export default function MemoGroups() {
                     </summary>
                     <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                       <li>
-                        <a>Delete</a>
+                        <a onClick={() => handleDelete(group.id)}>Delete</a>
                       </li>
                       <li>
-                        <a>Edit</a>
+                        <a onClick={() => handleUpdate(group)}>Edit</a>
                       </li>
                       <li>
                         <a>Empty</a>
@@ -98,6 +115,22 @@ export default function MemoGroups() {
           </tbody>
         </table>
       </div>
+
+      <GroupUpdateInput
+        isOpen={isUpdateGroupModalOpen}
+        onClose={() => {
+          setIsUpdateGroupModalOpen(false);
+          setSelectedGroup(null);
+        }}
+        onSuccess={fetchGroups}
+        group={selectedGroup}
+      />
+
+      <GroupNewInput
+        isOpen={isNewGroupModalOpen}
+        onClose={() => setIsNewGroupModalOpen(false)}
+        onSuccess={fetchGroups}
+      />
     </div>
   );
 }
