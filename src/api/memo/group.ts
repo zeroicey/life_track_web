@@ -43,11 +43,11 @@ export async function create_group(
       body: JSON.stringify(request),
     });
 
-    const data = await response.json();
+    const resp: Responder<Group> = await response.json();
     return {
-      status: response.ok,
-      message: data.message || "Success",
-      data: data.data, // 返回创建的 group 数据
+      status: resp.status,
+      message: resp.message || "Success",
+      data: null, // 返回创建的 group 数据
     };
   } catch (error) {
     return {
@@ -68,10 +68,10 @@ export async function delete_group(id: number): Promise<ApiResponse<null>> {
       }
     );
 
-    const data = await response.json();
+    const resp: Responder<Group> = await response.json();
     return {
-      status: response.ok,
-      message: data.message || "Successfully deleted",
+      status: resp.status,
+      message: resp.message || "Successfully deleted",
       data: null,
     };
   } catch (error) {
@@ -94,24 +94,28 @@ export async function update_group(
   request: UpdateGroupRequest
 ): Promise<ApiResponse<null>> {
   try {
-    const response = await fetch(`http://localhost:3000/api/memo/groups/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    });
+    const response = await fetch(
+      `http://localhost:3000/api/memo/groups/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(request),
+      }
+    );
 
-    const data = await response.json();
+    const resp: Responder<Group> = await response.json();
     return {
-      status: response.ok,
-      message: data.message || "Successfully updated",
+      status: resp.status,
+      message: resp.message || "Successfully updated",
       data: null,
     };
   } catch (error) {
     return {
       status: false,
-      message: error instanceof Error ? error.message : "Failed to update group",
+      message:
+        error instanceof Error ? error.message : "Failed to update group",
       data: null,
     };
   }

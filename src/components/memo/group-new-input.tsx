@@ -1,6 +1,5 @@
 "use client";
 import { create_group } from "@/api/memo/group";
-import { ApiResponse } from "@/api/response";
 import { useRef } from "react";
 
 interface GroupNewInputProps {
@@ -9,7 +8,11 @@ interface GroupNewInputProps {
   onSuccess: () => void;
 }
 
-export default function GroupNewInput({ isOpen, onClose, onSuccess }: GroupNewInputProps) {
+export default function GroupNewInput({
+  isOpen,
+  onClose,
+  onSuccess,
+}: GroupNewInputProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
@@ -28,8 +31,8 @@ export default function GroupNewInput({ isOpen, onClose, onSuccess }: GroupNewIn
     }
 
     // 清空输入框
-    if (nameRef.current) nameRef.current.value = '';
-    if (descriptionRef.current) descriptionRef.current.value = '';
+    if (nameRef.current) nameRef.current.value = "";
+    if (descriptionRef.current) descriptionRef.current.value = "";
 
     onSuccess();
     onClose();
@@ -37,8 +40,8 @@ export default function GroupNewInput({ isOpen, onClose, onSuccess }: GroupNewIn
 
   // 添加关闭时清空输入框的处理
   const handleClose = () => {
-    if (nameRef.current) nameRef.current.value = '';
-    if (descriptionRef.current) descriptionRef.current.value = '';
+    if (nameRef.current) nameRef.current.value = "";
+    if (descriptionRef.current) descriptionRef.current.value = "";
     onClose();
   };
 

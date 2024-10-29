@@ -66,29 +66,33 @@ export default function MemoGroups() {
           <IoMdAdd />
         </button>
       </div>
-      <div className="flex flex-grow border w-full rounded-lg overflow-y-auto p-2">
-        <table className="table min-w-full">
+      <div className="border w-full rounded-lg overflow-y-auto p-2 flex-1">
+        <table className="table w-full">
           <thead>
             <tr>
-              <th>Name</th>
-              <th className="hidden md:table-cell">Created At</th>
-              <th>Updated At</th>
-              <th className="hidden md:table-cell">Description</th>
-              <th className="hidden md:table-cell">Memo Number</th>
-              <th>Handle</th>
+              <th className="w-[15%]">Name</th>
+              <th className="hidden md:table-cell w-[15%]">Created At</th>
+              <th className="w-[15%]">Updated At</th>
+              <th className="hidden md:table-cell w-[30%]">Description</th>
+              <th className="hidden md:table-cell w-[15%]">Memo Number</th>
+              <th className="w-[10%]">Handle</th>
             </tr>
           </thead>
           <tbody>
             {groups.map((group: Group) => (
               <tr key={group.id}>
-                <td>
+                <td className="truncate max-w-0">
                   <Link className="link link-accent" href={`/memo/${group.id}`}>
                     {group.name}
                   </Link>
                 </td>
-                <td className="hidden md:table-cell">{group.created_at}</td>
-                <td>{group.updated_at}</td>
-                <td className="hidden md:table-cell">{group.description}</td>
+                <td className="hidden md:table-cell truncate max-w-0">
+                  {group.created_at}
+                </td>
+                <td className="truncate max-w-0">{group.updated_at}</td>
+                <td className="hidden md:table-cell truncate max-w-0">
+                  {group.description}
+                </td>
                 <td className="hidden md:table-cell">
                   <div className="badge badge-accent">{group.memo_number}</div>
                 </td>
