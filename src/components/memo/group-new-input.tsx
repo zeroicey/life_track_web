@@ -1,5 +1,5 @@
 "use client";
-import { create_group } from "@/api/memo/group";
+import { groupApi } from "@/services/memo/group";
 import { useRef } from "react";
 
 interface GroupNewInputProps {
@@ -21,7 +21,7 @@ export default function GroupNewInput({
       return;
     }
 
-    const response = await create_group({
+    const response = await groupApi.create({
       name: nameRef.current.value,
       description: descriptionRef.current?.value || "",
     });
@@ -30,7 +30,6 @@ export default function GroupNewInput({
       return;
     }
 
-    // 清空输入框
     if (nameRef.current) nameRef.current.value = "";
     if (descriptionRef.current) descriptionRef.current.value = "";
 
@@ -38,7 +37,6 @@ export default function GroupNewInput({
     onClose();
   };
 
-  // 添加关闭时清空输入框的处理
   const handleClose = () => {
     if (nameRef.current) nameRef.current.value = "";
     if (descriptionRef.current) descriptionRef.current.value = "";

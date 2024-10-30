@@ -1,6 +1,5 @@
 "use client";
-import { Group, update_group } from "@/api/memo/group";
-import { ApiResponse } from "@/api/response";
+import { Group, groupApi } from "@/services/memo/group";
 import { useEffect, useRef } from "react";
 
 interface GroupUpdateInputProps {
@@ -19,7 +18,6 @@ export default function GroupUpdateInput({
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
-  // 当 group 变化时更新输入框的值
   useEffect(() => {
     if (group && isOpen) {
       if (nameRef.current) nameRef.current.value = group.name;
@@ -32,7 +30,7 @@ export default function GroupUpdateInput({
       return;
     }
 
-    const response = await update_group(group.id, {
+    const response = await groupApi.update(group._id, {
       name: nameRef.current.value,
       description: descriptionRef.current?.value || "",
     });
