@@ -11,9 +11,10 @@ export interface ApiResponse<T = null> {
   data?: T;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-export type ApiModule = 'memo' | 'task' | 'article' | 'collect' | 'habit';
+export type ApiModule = "memo" | "task" | "article" | "collect" | "habit";
 
 export async function fetchApi<T = any, R = any>(
   module: ApiModule,
@@ -25,9 +26,9 @@ export async function fetchApi<T = any, R = any>(
 ): Promise<ApiResponse<R>> {
   try {
     const response = await fetch(`${API_BASE_URL}/${module}${endpoint}`, {
-      method: options?.method || 'GET',
+      method: options?.method || "GET",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: options?.body ? JSON.stringify(options.body) : undefined,
     });
@@ -41,8 +42,8 @@ export async function fetchApi<T = any, R = any>(
   } catch (error) {
     return {
       status: false,
-      message: error instanceof Error ? error.message : 'Network error',
+      message: error instanceof Error ? error.message : "Network error",
       data: undefined,
     };
   }
-} 
+}

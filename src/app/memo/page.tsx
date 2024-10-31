@@ -14,9 +14,7 @@ export default function MemoGroups() {
 
   const fetchGroups = async () => {
     const response = await groupApi.getAll();
-    if (!response.status || !response.data) {
-      return;
-    }
+    if (!response.status || !response.data) return;
     setGroups(response.data);
   };
 
@@ -24,88 +22,102 @@ export default function MemoGroups() {
     fetchGroups();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this group?")) {
-      return;
-    }
-
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!window.confirm("确定要删除这个分组吗？")) return;
     const response = await groupApi.delete(id);
     if (!response.status) {
       alert(response.message);
       return;
     }
-
     fetchGroups();
   };
 
-  const handleUpdate = (group: Group) => {
+  const handleUpdate = (e: React.MouseEvent, group: Group) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     setSelectedGroup(group);
     setIsUpdateGroupModalOpen(true);
   };
 
   return (
-    <div className="flex flex-col p-5 gap-3 h-screen">
-      <div className="flex flex-row items-center w-full border rounded-lg py-2 px-6">
-        <div className="breadcrumbs text-sm flex-grow">
-          <ul>
-            <li>
-              <a>Home</a>
-            </li>
-            <li>
-              <a>Memo</a>
-            </li>
-          </ul>
-        </div>
-        <button onClick={() => setIsNewGroupModalOpen(true)}>
-          <IoMdAdd />
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">备忘录分组</h1>
+        <button 
+          className="btn btn-primary"
+          onClick={() => setIsNewGroupModalOpen(true)}
+        >
+          <IoMdAdd /> 新建分组
         </button>
       </div>
-      <div className="border w-full rounded-lg overflow-y-auto p-2 flex-1">
-        <table className="table w-full">
-          <thead>
-            <tr>
-              <th className="w-[15%]">Name</th>
-              <th className="hidden md:table-cell w-[15%]">Created At</th>
-              <th className="w-[15%]">Updated At</th>
-              <th className="hidden md:table-cell w-[30%]">Description</th>
-              <th className="w-[10%]">Handle</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groups.map((group: Group) => (
-              <tr key={group._id}>
-                <td className="truncate max-w-0">
-                  <Link className="link link-accent" href={`/memo/${group._id}`}>
-                    {group.name}
-                  </Link>
-                </td>
-                <td className="hidden md:table-cell truncate max-w-0">
-                  {group.created_at}
-                </td>
-                <td className="truncate max-w-0">{group.updated_at}</td>
-                <td className="hidden md:table-cell truncate max-w-0">
-                  {group.description}
-                </td>
-                <td>
-                  <details className="dropdown dropdown-end">
-                    <summary className="btn m-1">
-                      <IoIosMore />
-                    </summary>
-                    <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                      <li>
-                        <a onClick={() => handleDelete(group._id)}>Delete</a>
-                      </li>
-                      <li>
-                        <a onClick={() => handleUpdate(group)}>Edit</a>
-                      </li>
-                    </ul>
-                  </details>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {groups.map((group) => (
+          <div key={group._id} className="card bg-base-100 shadow-xl">
+            <div className="card-body">
+              <div className="flex justify-between items-start">
+                <h2 className="card-title">
+                  <Link href={`/memo/${group._id}`}>{group.name}</Link>
+                </h2>
+                <div className="dropdown dropdown-end">
+                  <label tabIndex={0} className="btn btn-ghost btn-circle">
+                    <IoIosMore />
+                  </label>
+                  <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[1]">
+                    <li>
+                      <button 
+                        className="text-left"
+                        onClick={(e) => handleUpdate(e, group)}
+                      >
+                        编辑
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        className="text-left text-error"
+                        onClick={(e) => handleDelete(e, group._id)}
+                      >
+                        删除
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <p className="text-sm text-base-content/70">{group.description}</p>
+              <div className="flex justify-between items-center mt-4 text-sm text-base-content/60">
+                <span>备忘录: {group.memo_count}</span>
+                <span>更新于: {new Date(group.updated_at).toLocaleDateString()}</span>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+
+      {/* Empty State */}
+      {groups.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-12 text-base-content/70">
+          <div className="text-6xl mb-4">📁</div>
+          <p className="text-xl font-semibold mb-2">还没有分组</p>
+          <p className="mb-4">创建一个分组来开始管理你的备忘录吧！</p>
+          <button
+            className="btn btn-primary"
+            onClick={() => setIsNewGroupModalOpen(true)}
+          >
+            <IoMdAdd className="w-5 h-5" /> 新建分组
+          </button>
+        </div>
+      )}
+
+      {/* Modals */}
+      <GroupNewInput
+        isOpen={isNewGroupModalOpen}
+        onClose={() => setIsNewGroupModalOpen(false)}
+        onSuccess={fetchGroups}
+      />
 
       <GroupUpdateInput
         isOpen={isUpdateGroupModalOpen}
@@ -115,12 +127,6 @@ export default function MemoGroups() {
         }}
         onSuccess={fetchGroups}
         group={selectedGroup}
-      />
-
-      <GroupNewInput
-        isOpen={isNewGroupModalOpen}
-        onClose={() => setIsNewGroupModalOpen(false)}
-        onSuccess={fetchGroups}
       />
     </div>
   );
