@@ -59,7 +59,7 @@ export default function MemoGroupClient({ groupId }: ClientProps) {
   const handleDelete = async (id: string) => {
     if (!window.confirm("确定要删除这条备忘录吗？")) return;
     try {
-      const response = await memoApi.delete(id);
+      const response = await memoApi.delete(id, groupId);
       if (!response.status) {
         setError(response.message);
         return;
@@ -89,8 +89,8 @@ export default function MemoGroupClient({ groupId }: ClientProps) {
   if (error) {
     return (
       <div className="container mx-auto p-4">
-        <div className="alert alert-error">
-          <span>{error}</span>
+        <div className="alert alert-error shadow-lg">
+          <span className="text-error-content">{error}</span>
         </div>
       </div>
     );
@@ -99,64 +99,28 @@ export default function MemoGroupClient({ groupId }: ClientProps) {
   if (isLoading) {
     return (
       <div className="container mx-auto p-4 flex justify-center items-center min-h-[50vh]">
-        <span className="loading loading-spinner loading-lg"></span>
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <button
-            className="btn btn-circle btn-ghost"
-            onClick={() => router.push("/memo")}
-          >
-            <IoMdArrowRoundBack className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold">{group?.name}</h1>
-            <p className="text-base-content/70 text-sm">{group?.description}</p>
+    <div className="min-h-screen bg-base-100">
+      <div className="container mx-auto p-4 space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center bg-base-100 p-4 rounded-lg shadow-sm">
+          <div className="flex items-center gap-4">
+            <button
+              className="btn btn-ghost btn-circle hover:bg-base-200"
+              onClick={() => router.push("/memo")}
+            >
+              <IoMdArrowRoundBack className="w-6 h-6 text-base-content" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-base-content">{group?.name}</h1>
+              <p className="text-base-content/70 text-sm">{group?.description}</p>
+            </div>
           </div>
-        </div>
-        <button
-          className="btn btn-primary"
-          onClick={() => setIsNewMemoModalOpen(true)}
-        >
-          <IoMdAdd className="w-5 h-5" /> 新建备忘录
-        </button>
-      </div>
-
-      {/* Stats */}
-      <div className="stats shadow w-full">
-        <div className="stat">
-          <div className="stat-title">备忘录数量</div>
-          <div className="stat-value">{group?.memo_count || 0}</div>
-          <div className="stat-desc">
-            最后更新: {group?.updated_at ? new Date(group.updated_at).toLocaleString() : ""}
-          </div>
-        </div>
-      </div>
-
-      {/* Memos Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {memos.map((memo) => (
-          <MemoItem
-            key={memo._id}
-            memo={memo}
-            onDelete={() => handleDelete(memo._id)}
-            onUpdate={() => handleUpdate(memo)}
-          />
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {memos.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-12 text-base-content/70">
-          <div className="text-6xl mb-4">📝</div>
-          <p className="text-xl font-semibold mb-2">还没有备忘录</p>
-          <p className="mb-4">点击右上角的按钮创建第一条备忘录吧！</p>
           <button
             className="btn btn-primary"
             onClick={() => setIsNewMemoModalOpen(true)}
@@ -164,25 +128,63 @@ export default function MemoGroupClient({ groupId }: ClientProps) {
             <IoMdAdd className="w-5 h-5" /> 新建备忘录
           </button>
         </div>
-      )}
 
-      {/* Modals */}
-      <MemoNewInput
-        isOpen={isNewMemoModalOpen}
-        onClose={() => setIsNewMemoModalOpen(false)}
-        onSuccess={handleCreateSuccess}
-        groupId={groupId}
-      />
+        {/* Stats */}
+        <div className="stats bg-base-100 shadow-sm w-full">
+          <div className="stat">
+            <div className="stat-title text-base-content/70">备忘录数量</div>
+            <div className="stat-value text-primary">{group?.memo_count || 0}</div>
+            <div className="stat-desc text-base-content/60">
+              最后更新: {group?.updated_at ? new Date(group.updated_at).toLocaleString() : ""}
+            </div>
+          </div>
+        </div>
 
-      <MemoUpdateInput
-        isOpen={isUpdateMemoModalOpen}
-        onClose={() => {
-          setIsUpdateMemoModalOpen(false);
-          setSelectedMemo(null);
-        }}
-        onSuccess={handleUpdateSuccess}
-        memo={selectedMemo}
-      />
+        {/* Memos Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {memos.map((memo) => (
+            <MemoItem
+              key={memo._id}
+              memo={memo}
+              onDelete={() => handleDelete(memo._id)}
+              onUpdate={() => handleUpdate(memo)}
+            />
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {memos.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12 bg-base-100 rounded-lg shadow-sm">
+            <div className="text-6xl mb-4">📝</div>
+            <p className="text-xl font-semibold text-base-content mb-2">还没有备忘录</p>
+            <p className="text-base-content/70 mb-4">点击右上角的按钮创建第一条备忘录吧！</p>
+            <button
+              className="btn btn-primary"
+              onClick={() => setIsNewMemoModalOpen(true)}
+            >
+              <IoMdAdd className="w-5 h-5" /> 新建备忘录
+            </button>
+          </div>
+        )}
+
+        {/* Modals */}
+        <MemoNewInput
+          isOpen={isNewMemoModalOpen}
+          onClose={() => setIsNewMemoModalOpen(false)}
+          onSuccess={handleCreateSuccess}
+          groupId={groupId}
+        />
+
+        <MemoUpdateInput
+          isOpen={isUpdateMemoModalOpen}
+          onClose={() => {
+            setIsUpdateMemoModalOpen(false);
+            setSelectedMemo(null);
+          }}
+          onSuccess={handleUpdateSuccess}
+          memo={selectedMemo}
+        />
+      </div>
     </div>
   );
 } 

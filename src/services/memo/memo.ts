@@ -35,13 +35,13 @@ export const memoApi = {
 
   update: (id: string, data: UpdateMemoRequest): Promise<ApiResponse<Memo>> => {
     return fetchApi('memo', `/memos/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: data,
     });
   },
 
-  delete: (id: string): Promise<ApiResponse<Memo>> => {
-    return fetchApi('memo', `/memos/${id}`, {
+  delete: (id: string, group_id: string): Promise<ApiResponse<void>> => {
+    return fetchApi('memo', `/memos/${id}?group_id=${group_id}`, {
       method: 'DELETE',
     });
   },
