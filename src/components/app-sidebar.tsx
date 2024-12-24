@@ -36,6 +36,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 // Menu items with badges.
 const items = [
@@ -93,16 +94,9 @@ export function AppSidebar() {
           <SidebarGroupLabel className="flex items-center gap-2">
             <Image src={logo} alt="Life Track" width={20} height={20} />
             <span>Life Track</span>
-            <button
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-              className="ml-auto p-2 rounded transition-colors duration-300 hover:bg-gray-300 dark:hover:bg-gray-700"
-            >
-              {theme === "light" ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
+            <div className="ml-auto">
+              <ThemeToggle />
+            </div>
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
