@@ -9,8 +9,11 @@ import {
   File,
   Sun,
   Moon,
+  User2,
+  ChevronUp,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 
 import {
@@ -23,51 +26,58 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuBadge,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 
 import logo from "@/assets/logo.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Menu items with badges.
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/",
     icon: Home,
     badge: 5,
   },
   {
     title: "Memo",
-    url: "#",
+    url: "/memo",
     icon: FileText,
     badge: 12,
   },
   {
     title: "Calendar",
-    url: "#",
+    url: "/calendar",
     icon: Calendar,
     badge: 3,
   },
   {
     title: "Task",
-    url: "#",
+    url: "/task",
     icon: CheckSquare,
     badge: 8,
   },
   {
     title: "Collect",
-    url: "#",
+    url: "/collect",
     icon: Box,
     badge: 15,
   },
   {
     title: "Habit",
-    url: "#",
+    url: "/habit",
     icon: Repeat,
     badge: 7,
   },
   {
     title: "Article",
-    url: "#",
+    url: "/article",
     icon: File,
     badge: 24,
   },
@@ -87,7 +97,11 @@ export function AppSidebar() {
               onClick={() => setTheme(theme === "light" ? "dark" : "light")}
               className="ml-auto p-2 rounded transition-colors duration-300 hover:bg-gray-300 dark:hover:bg-gray-700"
             >
-              {theme === "light" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {theme === "light" ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
             </button>
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -95,13 +109,13 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url} className="flex items-center gap-2">
+                    <Link href={item.url} className="flex items-center gap-2">
                       <item.icon />
                       <span>{item.title}</span>
                       {item.title !== "Home" && (
                         <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
                       )}
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -109,6 +123,31 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton>
+                  <User2 /> zeroicey
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                className="w-[--radix-popper-anchor-width]"
+              >
+                <DropdownMenuItem asChild>
+                  <Link href="/account">Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings">Settings</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
