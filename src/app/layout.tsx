@@ -27,10 +27,14 @@ export default function RootLayout({
           >
             <SidebarProvider>
               <AppSidebar />
-              <main>
-                <SidebarTrigger />
-                {children}
-              </main>
+              <div className="flex flex-col w-screen h-screen">
+                {/* <div className="w-full border border-red-500 px-1.5">
+                  <SidebarTrigger />
+                </div> */}
+                <div className="h-full w-full p-3 border border-blue-500">
+                  {children}
+                </div>
+              </div>
             </SidebarProvider>
           </ThemeProvider>
         </body>

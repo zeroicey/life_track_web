@@ -1,29 +1,22 @@
+import { MoreHorizontal } from "lucide-react";
+import { Button } from "../ui/button";
+
 interface MemoItemProps {
-  id: string;
-  content: string;
-  tags: string[];
-  createdAt: string;
+  content?: string;
+  createdAt?: string;
+  attachments?: string[];
 }
 
-export function MemoItem({ content, tags, createdAt }: MemoItemProps) {
+export function MemoItem({ content = "这是一条示例备忘录", createdAt = "2024-03-24 12:00" }: MemoItemProps) {
   return (
-    <div className="p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-      <p className="whitespace-pre-wrap">{content}</p>
-      {tags.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-      )}
-      <time className="text-xs text-muted-foreground mt-2 block">
-        {new Date(createdAt).toLocaleString()}
-      </time>
+    <div className="flex flex-col gap-2 p-3 rounded-md border border-border bg-background hover:bg-accent/50 transition-colors">
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-muted-foreground">{createdAt}</span>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="text-sm text-foreground whitespace-pre-wrap">{content}</div>
     </div>
   );
 }
