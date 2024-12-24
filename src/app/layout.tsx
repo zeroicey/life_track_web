@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 
 export const metadata: Metadata = {
@@ -31,9 +31,7 @@ export default function RootLayout({
                 {/* <div className="w-full border border-red-500 px-1.5">
                   <SidebarTrigger />
                 </div> */}
-                <div className="h-full w-full p-3 border border-blue-500">
-                  {children}
-                </div>
+                <div className="h-full w-full p-3">{children}</div>
               </div>
             </SidebarProvider>
           </ThemeProvider>
