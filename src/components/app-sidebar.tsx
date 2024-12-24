@@ -1,4 +1,5 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Home, FileText, Calendar, CheckSquare, Box, Repeat, File } from "lucide-react";
+import Image from "next/image";
 
 import {
   Sidebar,
@@ -11,6 +12,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
+import logo from "@/assets/logo.png";
+
 // Menu items.
 const items = [
   {
@@ -19,9 +22,9 @@ const items = [
     icon: Home,
   },
   {
-    title: "Inbox",
+    title: "Memo",
     url: "#",
-    icon: Inbox,
+    icon: FileText,
   },
   {
     title: "Calendar",
@@ -29,14 +32,24 @@ const items = [
     icon: Calendar,
   },
   {
-    title: "Search",
+    title: "Task",
     url: "#",
-    icon: Search,
+    icon: CheckSquare,
   },
   {
-    title: "Settings",
+    title: "Collect",
     url: "#",
-    icon: Settings,
+    icon: Box,
+  },
+  {
+    title: "Habit",
+    url: "#",
+    icon: Repeat,
+  },
+  {
+    title: "Article",
+    url: "#",
+    icon: File,
   },
 ];
 
@@ -45,7 +58,10 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel className="flex items-center gap-2">
+            <Image src={logo} alt="Life Track" width={20} height={20} />
+            <span>Life Track</span>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
