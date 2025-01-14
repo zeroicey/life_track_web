@@ -59,68 +59,51 @@ const modules = [
 export default function Home() {
   return (
     <div className="flex flex-col w-full h-full gap-2 p-4 border">
-      <div className="border">
-        <h1 className="text-4xl font-bold tracking-tight">Life Track</h1>
-        <p className="text-xl">
+      <div className="mb-4 p-4 border bg-muted/50">
+        <h1 className="text-2xl font-bold mb-2">Life Track</h1>
+        <p className="mb-2 text-foreground">
           A comprehensive life tracking system designed to help you better
           manage and record all aspects of your life.
         </p>
-        <p className="text-sm">
-          This project is made for zeroicey and made by zeroicey to help him go
-          through ups and downs, arrange, schedule, record and collect the
-          chaotic life, find the meaning of life and give him the courage to
-          survive.
+        <p className="text-sm text-muted-foreground">
+          This project is made for zeroicey and made by zeroicey.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4 border">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto scrollbar-hide">
         {modules.map((module) => (
-          <div
-            key={module.title}
-            className="group relative p-6 rounded-xl bg-background/80 backdrop-blur-sm 
-                border border-border/50 transition-all duration-200
-                hover:bg-accent/20 hover:border-primary/20"
-          >
-            <div
-              className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent 
-                rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
-            />
-            <div className="relative flex items-start gap-4">
-              <div
-                className="h-10 w-10 rounded-lg flex items-center justify-center
-                  bg-primary/10 text-primary-foreground/80"
-              >
+          <div key={module.title} className="p-4 border border-border bg-card">
+            <div className="flex gap-2 mb-4">
+              <div className="p-2 bg-muted">
                 <module.icon className="h-5 w-5" />
               </div>
-              <div className="space-y-2 flex-1">
-                <h2 className="text-xl font-semibold">{module.title}</h2>
+              <div>
+                <h2 className="font-bold text-card-foreground">
+                  {module.title}
+                </h2>
                 <p className="text-sm text-muted-foreground">
                   {module.description}
                 </p>
-                <ul className="text-sm space-y-1.5 mt-4">
-                  {module.features.map((feature) => (
-                    <li
-                      key={feature}
-                      className="text-muted-foreground flex items-center gap-2"
-                    >
-                      <div className="h-1.5 w-1.5 rounded-full bg-primary/50" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="mt-4 w-full justify-between rounded-lg
-                      bg-primary/10 hover:bg-primary/20 transition-colors"
-                >
-                  <Link href={module.href}>
-                    Go to {module.title}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
               </div>
             </div>
+
+            <ul className="mb-4">
+              {module.features.map((feature) => (
+                <li key={feature} className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-primary rounded-full" />
+                  <span className="text-sm text-muted-foreground">
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <Button asChild variant="outline" className="w-full">
+              <Link href={module.href}>
+                Go to {module.title}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         ))}
       </div>
