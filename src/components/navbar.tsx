@@ -16,7 +16,10 @@ export function Navbar() {
   const [moduleName, setModuleName] = useState("");
   const [rightContent, setRightContent] = useState<rightContent[]>([]);
   useEffect(() => {
-    if (pathname === "/memo") {
+    if (pathname === "/") {
+      setModuleName("Home");
+      setRightContent([]);
+    } else if (pathname === "/memo") {
       setModuleName("Memo");
       setRightContent([
         {
