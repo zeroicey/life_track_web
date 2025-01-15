@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
-  title: "Life Track",
-  description: "Life Track",
+  title: {
+    default: "Life Track",
+    template: "Life Track | %s",
+  },
+  description:
+    "A comprehensive life tracking system designed to help you better manage and record all aspects of your life.",
 };
 
 export default function RootLayout({
@@ -28,10 +33,7 @@ export default function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <div className="flex flex-col w-screen h-screen">
-                <div className="w-full p-1 flex items-center gap-2 border">
-                  <SidebarTrigger />
-                  Life Track
-                </div>
+                <Navbar />
                 <div className="flex-1 overflow-hidden p-3">{children}</div>
               </div>
             </SidebarProvider>
