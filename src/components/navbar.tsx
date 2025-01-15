@@ -13,13 +13,16 @@ interface rightContent {
 
 export function Navbar() {
   const pathname = usePathname();
+  const [moduleUrl, setModuleUrl] = useState("");
   const [moduleName, setModuleName] = useState("");
   const [rightContent, setRightContent] = useState<rightContent[]>([]);
   useEffect(() => {
     if (pathname === "/") {
+      setModuleUrl("/");
       setModuleName("Home");
       setRightContent([]);
-    } else if (pathname === "/memo") {
+    } else if (pathname.startsWith("/memo")) {
+      setModuleUrl("/memo");
       setModuleName("Memo");
       setRightContent([
         {
@@ -41,7 +44,7 @@ export function Navbar() {
       <SidebarTrigger />
       <div className="w-full flex items-center flex-1 justify-between px-2">
         <div>
-          <Link href={pathname}>{moduleName}</Link>
+          <Link href={moduleUrl}>{moduleName}</Link>
         </div>
         <div>
           <div className="flex gap-2">
